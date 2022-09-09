@@ -21,25 +21,57 @@ monngoose
     console.log("Conexão feita com erro!!!");
   });
 
-app.get("/", (req, res) => {
+app.get("/listar", (req, res) => {
   Blog.find({})
     .then((article) => {
-      res.json({
+      res.status(200).json({
         data: article,
         error: false,
         totalElements: article?.length,
       });
     })
     .catch((err) => {
-      res.json({
+      res.status(400).json({
         error: true,
         message: err,
       });
     });
 });
 
+app.get("/listar/:id", (req, res) => {
+    Blog.findById({_id: req.params.id})
+      .then((article) => {
+        res.status(200).json({
+          data: article,
+          error: false,
+        });
+      })
+      .catch((err) => {
+        res.status(400).json({
+          error: true,
+          message: err,
+        });
+      });
+  });
+
+
+app.delete("/delete/:id", (req, res) => {
+  Blog.deleteOne({_id : req.params.id}, (err) => {
+    if (err) {
+      return res.status(400).json({
+        error: true, 
+        message: "Problema ao eliminar o usuário!!!",
+      });
+    }
+    return res.status(200).json({
+      error: false,
+      message: "Eliminado com sucesso !!!",
+    });
+  });
+});
+
 app.post("/cadastrar", (req, res) => {
-  console.log(req.body);
+
   Blog.create(req.body, (err) => {
     if (err) {
       return res.status(400).json({
@@ -47,6 +79,7 @@ app.post("/cadastrar", (req, res) => {
         message: "Erro ao cadastrar um article",
       });
     }
+
     return res.status(200).json({
       error: false,
       message: "Cadastrado com Sucesso!!!!",
