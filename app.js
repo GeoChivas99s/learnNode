@@ -39,27 +39,26 @@ app.get("/listar", (req, res) => {
 });
 
 app.get("/listar/:id", (req, res) => {
-    Blog.findById({_id: req.params.id})
-      .then((article) => {
-        res.status(200).json({
-          data: article,
-          error: false,
-        });
-      })
-      .catch((err) => {
-        res.status(400).json({
-          error: true,
-          message: err,
-        });
+  Blog.findById({ _id: req.params.id })
+    .then((article) => {
+      res.status(200).json({
+        data: article,
+        error: false,
       });
-  });
-
+    })
+    .catch((err) => {
+      res.status(400).json({
+        error: true,
+        message: err,
+      });
+    });
+});
 
 app.delete("/delete/:id", (req, res) => {
-  Blog.deleteOne({_id : req.params.id}, (err) => {
+  Blog.deleteOne({ _id: req.params.id }, (err) => {
     if (err) {
       return res.status(400).json({
-        error: true, 
+        error: true,
         message: "Problema ao eliminar o usuário!!!",
       });
     }
@@ -71,7 +70,6 @@ app.delete("/delete/:id", (req, res) => {
 });
 
 app.post("/cadastrar", (req, res) => {
-
   Blog.create(req.body, (err) => {
     if (err) {
       return res.status(400).json({
@@ -83,6 +81,22 @@ app.post("/cadastrar", (req, res) => {
     return res.status(200).json({
       error: false,
       message: "Cadastrado com Sucesso!!!!",
+    });
+  });
+});
+
+app.put("/editar/:id", (req, res) => {
+  Blog.findByIdAndUpdate(req.params.id, { ...req.body }, (err) => {
+    if (err) {
+      return res.status(400).json({
+        error: true,
+        message: "Erro ao actualizar um article",
+      });
+    }
+
+    return res.status(200).json({
+      error: false,
+      message: "Actualizado com Sucesso!!!!",
     });
   });
 });
